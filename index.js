@@ -113,7 +113,7 @@ app.delete("/tasks/:taskId", async (req, res) => {
   const { taskId } = req.params;
   // validate taskId
   try {
-    const deletedTask = await client.taskItem.delete({
+    await client.taskItem.delete({
       where: {
         id: taskId,
         // this will delete the task with the id passed in the url
