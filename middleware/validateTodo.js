@@ -12,11 +12,11 @@ function validateTodo(req, res, next) {
       .json({ status: "error", message: "Description is required" });
   }
 
-  if (typeof taskTitle !== "string" || typeof taskDescription !== "string") {
-    return res
-      .status(400)
-      .json({ error: "Title and description must be strings" });
-  }
+  //   if (typeof taskTitle !== "string" || typeof taskDescription !== "string") {
+  //     return res
+  //       .status(400)
+  //       .json({ error: "Title and description must be strings" });
+  //   }
 
   next();
 }

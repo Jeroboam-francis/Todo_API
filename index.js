@@ -1,11 +1,13 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import validateTodo from "./middleware/validateTodo.js";
 
 const client = new PrismaClient();
 const app = express();
 
 let port;
 app.use(express.json());
+// app.use(validateTodo); this will apply to all routes
 
 app.get("/tasks", (req, res) => {
   res.send("Getting all tasks");
@@ -15,7 +17,9 @@ app.get("/tasks/:taskId", (req, res) => {
   res.send("Getting task with ID");
 });
 
-app.post("/tasks", async (req, res) => {
+app.post("/tasks", validateTodo, async (req, res) => {
+  // you use array  [validateTodo, otherMiddleware ] if you have many middlewares,
+
   const { taskTitle, taskDescription } = req.body;
   try {
     const newTask = await client.taskItem.create({
