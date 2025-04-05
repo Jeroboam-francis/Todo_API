@@ -109,9 +109,20 @@ app.patch("/tasks/:taskId", async (req, res) => {
     });
   }
 });
-app.delete("/tasks/:taskId", (req, res) => {
+app.delete("/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+  // validate taskId
   try {
-    //
+    const deletedTask = await client.taskItem.delete({
+      where: {
+        id: taskId,
+        // this will delete the task with the id passed in the url
+      },
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Task deleted successfully",
+    });
   } catch (e) {
     res.status(500).json({
       status: "error",
