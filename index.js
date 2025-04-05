@@ -9,12 +9,49 @@ let port;
 app.use(express.json());
 // app.use(validateTodo); this will apply to all routes
 
-app.get("/tasks", (req, res) => {
-  res.send("Getting all tasks");
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await client.taskItem.findMany();
+    res.status(200).json({
+      status: "success",
+      message: "Tasks fetched successfully",
+      data: tasks,
+    });
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "An error occured",
+    });
+  }
 });
 
-app.get("/tasks/:taskId", (req, res) => {
-  res.send("Getting task with ID");
+app.get("/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+  // validate taskId
+  try {
+    const task = await client.taskItem.findFirst({
+      where: { id: taskId }, // findFirst is used to find a single record in the database which matches (taskId)
+    });
+    if (!task) {
+      return res.status(404).json({
+        status: "error",
+        message: "Task not found",
+      });
+      //This is optional, but it is a good practice to check if the task exists before sending the response.
+      // if task is not found, we will send a 404 error
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Task fetched successfully",
+      data: task,
+      //task- task found in the database when we findFirst
+    });
+  } catch (e) {
+    res.stsus(500).json({
+      status: "error",
+      message: "An error occured",
+    });
+  }
 });
 
 app.post("/tasks", validateTodo, async (req, res) => {
