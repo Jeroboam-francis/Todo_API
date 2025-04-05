@@ -81,11 +81,43 @@ app.post("/tasks", validateTodo, async (req, res) => {
   }
 });
 
-app.patch("/tasks/:taskId", (req, res) => {
-  res.send("Updating task with ID");
+app.patch("/tasks/:taskId", async (req, res) => {
+  const { taskTitle, taskDescription, isComplete } = req.body;
+  const { taskId } = req.params;
+  try {
+    const updatedTask = await client.taskItem.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        taskTitle: taskTitle && taskTitle,
+        taskDescription: taskDescription && taskDescription,
+        isComplete: isComplete && isComplete,
+        // this will only update the fields that are passed in the request body
+        // if a field is not passed, it will not be updated
+      },
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Task updated successfully",
+      data: updatedTask,
+    });
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "An error occured",
+    });
+  }
 });
 app.delete("/tasks/:taskId", (req, res) => {
-  res.send("Deleting task with ID");
+  try {
+    //
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "An error occured",
+    });
+  }
 });
 
 if (process.env.PORT) {
